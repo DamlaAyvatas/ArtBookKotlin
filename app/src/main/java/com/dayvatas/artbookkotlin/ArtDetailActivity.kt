@@ -17,4 +17,8 @@ class ArtDetailActivity : AppCompatActivity() {
     fun selectImage(){
 
     }
+
+    fun saveClicked(){
+
+    }
 }
