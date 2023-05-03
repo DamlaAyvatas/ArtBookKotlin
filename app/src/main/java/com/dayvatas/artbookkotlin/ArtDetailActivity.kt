@@ -96,7 +96,28 @@ class ArtDetailActivity : AppCompatActivity() {
 
             val outputStream = ByteArrayOutputStream()
             smallBitmap.compress(Bitmap.CompressFormat.PNG, 50, outputStream)
-            val byteArray = outputStream.toByteArray()
+            val byteArray = outputStream.toByteArray()      // bir görsel veriye çevrilmek istendiğinde bu şekilde çevirilir
+
+            try{
+                //database oluşturuyorum
+                val database = this.openOrCreateDatabase("Arts", MODE_PRIVATE, null)
+                database.execSQL("CREATE TABLE IF NOT EXISTS arts(id INTEGER PRIMARY KEY, artName VARCHAR, artistName VARCHAR, image BLOB)")
+                //alınan değişkenleri buraya kaydediyorum
+                val sqlString = "INSERT INTO arts (artName, artistName, year, image) VALUES (?, ?, ?, ?)"
+                //değişkenleri soru işaretlerine bağlıyorum
+                val statement = database.compileStatement(sqlString)
+                statement.bindString(1, artName)
+                statement.bindString(2, artistName)
+                statement.bindString(3, year)
+                statement.bindBlob(4, byteArray)
+                statement.execute()
+
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
+            val intent = Intent(this@ArtDetailActivity, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) //arkada çalışan diğer aktiviteleri kapatıyorum
+            startActivity(intent)
         }
     }
 
