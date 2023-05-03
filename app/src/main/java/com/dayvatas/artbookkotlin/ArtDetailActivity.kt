@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.dayvatas.artbookkotlin.databinding.ActivityArtDetailBinding
 import com.google.android.material.snackbar.Snackbar
+import java.io.ByteArrayOutputStream
 
 
 class ArtDetailActivity : AppCompatActivity() {
@@ -93,6 +94,9 @@ class ArtDetailActivity : AppCompatActivity() {
         if(selectedBitMap != null){
             val smallBitmap = makeSmallerBitmap(selectedBitMap!!,300)
 
+            val outputStream = ByteArrayOutputStream()
+            smallBitmap.compress(Bitmap.CompressFormat.PNG, 50, outputStream)
+            val byteArray = outputStream.toByteArray()
         }
     }
 
