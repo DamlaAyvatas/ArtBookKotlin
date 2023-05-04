@@ -10,11 +10,36 @@ import com.dayvatas.artbookkotlin.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
+    private lateinit var artList : ArrayList<Art>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        artList = ArrayList<Art>()
+
+        try{
+            val database = this.openOrCreateDatabase("Arts", MODE_PRIVATE, null)
+            val cursor = database.rawQuery("SELECT * FROM arts", null) //Filtreleme -> hepsini seçiyorum
+
+            val artNameIx = cursor.getColumnIndex("artName")
+            val idIx = cursor.getColumnIndex("id")      //Böylece bu ikisinin hangi columnlara kaydedildiğini aldım
+
+            while (cursor.moveToNext()){            //cursor bir sonrakine ilerlerken dönecek while
+                val name = cursor.getString(artNameIx)
+                val id = cursor.getInt(idIx)
+                //Bu ikisi ufak bir modelde birleştirip Art olarak kaydedebilir, recyclerView'e o modeli verebilirim
+                val art = Art(name, id)     //Bunu bir arrayList'e koyacağız, sonra da recyclerView'e vereceğiz
+                artList.add(art)            //Oluşturduğum art'ları array'e ekliyorum
+            }
+            cursor.close()
+
+
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
