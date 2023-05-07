@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.dayvatas.artbookkotlin.databinding.RecyclerRowBinding
 
-class ArtAdapter() : RecyclerView.Adapter<ArtAdapter.ArtHolder>() {
+class ArtAdapter(val artList : ArrayList<Art>) : RecyclerView.Adapter<ArtAdapter.ArtHolder>() {
     class ArtHolder(val binding : RecyclerRowBinding): RecyclerView.ViewHolder(binding.root){
 
 
