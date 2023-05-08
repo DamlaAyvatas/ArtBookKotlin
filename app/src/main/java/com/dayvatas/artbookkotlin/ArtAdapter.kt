@@ -15,7 +15,7 @@ class ArtAdapter(val artList : ArrayList<Art>) : RecyclerView.Adapter<ArtAdapter
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return artList.size
     }
 
     override fun onBindViewHolder(holder: ArtHolder, position: Int) {
