@@ -2,8 +2,10 @@ package com.dayvatas.artbookkotlin
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
@@ -26,12 +28,14 @@ class ArtDetailActivity : AppCompatActivity() {
     private lateinit var activityResultLauncher : ActivityResultLauncher<Intent>
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     var selectedBitMap : Bitmap? = null
+    private lateinit var database : SQLiteDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityArtDetailBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        database = this.openOrCreateDatabase("Arts", Context.MODE_PRIVATE,null)
         registerLauncher()
     }
 
@@ -60,7 +64,7 @@ class ArtDetailActivity : AppCompatActivity() {
 
         }
         else{
-            //Androdi 32- READ_EXTERNAL_STORAGE
+            //Android 32- READ_EXTERNAL_STORAGE
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
                 //rationale
                 if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
@@ -138,7 +142,7 @@ class ArtDetailActivity : AppCompatActivity() {
             val scaledWidth = height / bitmapRatio
             width = scaledWidth.toInt()
         }
-        return Bitmap.createScaledBitmap(image, 100, 100, true)
+        return Bitmap.createScaledBitmap(image, width, height, true)
     }
 
     private fun registerLauncher(){
