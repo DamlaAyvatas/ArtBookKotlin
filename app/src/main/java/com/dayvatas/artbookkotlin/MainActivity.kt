@@ -1,59 +1,77 @@
 package com.dayvatas.artbookkotlin
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.dayvatas.artbookkotlin.databinding.ActivityArtDetailBinding
 import com.dayvatas.artbookkotlin.databinding.ActivityMainBinding
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityMainBinding
+
+    private lateinit var binding: ActivityMainBinding
     private lateinit var artList : ArrayList<Art>
+    private lateinit var artAdapter : ArtAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
         artList = ArrayList<Art>()
+        artAdapter = ArtAdapter(artList)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = artAdapter
 
-        try{
-            val database = this.openOrCreateDatabase("Arts", MODE_PRIVATE, null)
-            val cursor = database.rawQuery("SELECT * FROM arts", null) //Filtreleme -> hepsini seçiyorum
+        try {
 
-            val artNameIx = cursor.getColumnIndex("artName")
-            val idIx = cursor.getColumnIndex("id")      //Böylece bu ikisinin hangi columnlara kaydedildiğini aldım
+            val database = this.openOrCreateDatabase("Arts", Context.MODE_PRIVATE,null)
 
-            while (cursor.moveToNext()){            //cursor bir sonrakine ilerlerken dönecek while
+            val cursor = database.rawQuery("SELECT * FROM arts",null)
+            val artNameIx = cursor.getColumnIndex("artname")
+            val idIx = cursor.getColumnIndex("id")
+
+            while (cursor.moveToNext()) {
                 val name = cursor.getString(artNameIx)
                 val id = cursor.getInt(idIx)
-                //Bu ikisi ufak bir modelde birleştirip Art olarak kaydedebilir, recyclerView'e o modeli verebilirim
-                val art = Art(name, id)     //Bunu bir arrayList'e koyacağız, sonra da recyclerView'e vereceğiz
-                artList.add(art)            //Oluşturduğum art'ları array'e ekliyorum
+                val art = Art(name,id)
+                artList.add(art)
             }
+
+            artAdapter.notifyDataSetChanged()
+
             cursor.close()
 
-
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        //Inflater
         val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.art_menu, menu)
+        menuInflater.inflate(R.menu.art_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.add_art_item){
-            val intent = Intent(this@MainActivity, ArtDetailActivity::class.java)
-            startActivity(intent)
 
+        if (item.itemId == R.id.add_art_item) {
+            val intent = Intent(this, ArtDetailActivity::class.java)
+            intent.putExtra("info","new")
+            startActivity(intent)
         }
+
         return super.onOptionsItemSelected(item)
     }
+
+
 }
